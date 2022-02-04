@@ -140,44 +140,12 @@ router.post("/setTutorialStatus", verify, async (request, response) => {
     }
 });
 
-router.get("/getTopThree", verify, async (_, response) => {
+router.get("/getTopTen", verify, async (_, response) => {
     try {
         const users = await User.find({}).sort({ highestScore: -1 });
-        const topThree = users.slice(0, 3);
+        const topThree = users.slice(0, 10);
 
         response.status(200).json({ topThree });
-    } catch (error) {
-        // Return error
-        response.status(500).json({ error });
-    }
-});
-
-router.get("/getPeopleAroundYou", verify, async (request, response) => {
-    try {
-        // Deconstruct request
-        const { _id } = request;
-
-        const users = await User.find({}).sort({ highestScore: -1 });
-        const user = await User.findOne({ _id });
-
-        var index = -1;
-        var yourScore = -1;
-        for (let i = 0; i < users.length; i++) {
-            const elem = users[i];
-
-            if (elem.username === user.username) {
-                index = i;
-                yourScore = elem.highestScore;
-                break;
-            }
-        }
-
-        if (index === -1) return response.status(409).json({ error: "This username is not in the database." });
-        if (yourScore <= 0) return response.status(409).json({ error: "Non enough score to show this list" });
-
-        const aroundYou = users.slice(Math.max(0, index - 2), Math.min(users.length, index + 3));
-
-        response.status(200).json({ aroundYou });
     } catch (error) {
         // Return error
         response.status(500).json({ error });
