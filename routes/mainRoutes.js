@@ -140,12 +140,18 @@ router.post("/setTutorialStatus", verify, async (request, response) => {
     }
 });
 
-router.get("/getTopTen", verify, async (_, response) => {
+router.get("/getTopTen", verify, async (request, response) => {
+    console.log("hola");
     try {
+        // Deconstruct request
+        const { _id: userId } = request;
+
         const users = await User.find({}).sort({ highestScore: -1 });
+
+        const userPosition = users.findIndex(({ _id }) => _id.toString() === userId);
         const topTen = users.slice(0, 10);
 
-        response.status(200).json({ topTen });
+        response.status(200).json({ topTen, userPosition });
     } catch (error) {
         // Return error
         response.status(500).json({ error });
