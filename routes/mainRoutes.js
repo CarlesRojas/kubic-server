@@ -143,9 +143,9 @@ router.post("/setTutorialStatus", verify, async (request, response) => {
 router.get("/getTopTen", verify, async (_, response) => {
     try {
         const users = await User.find({}).sort({ highestScore: -1 });
-        const topThree = users.slice(0, 10);
+        const topTen = users.slice(0, 10);
 
-        response.status(200).json({ topThree });
+        response.status(200).json({ topTen });
     } catch (error) {
         // Return error
         response.status(500).json({ error });
