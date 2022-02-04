@@ -17,7 +17,29 @@ router.post("/validateUsername", async (request, response) => {
 
     // If there is a validation error
     if (error) return response.status(422).json({ error: error.details[0].message });
-    return response.status(200).json({ success: true });
+
+    try {
+        // Deconstruct request
+        const { username } = request.body;
+
+        // Get user
+        const user = await ScoreEntry.findOne({ username });
+        if (user) return response.status(409).json({ error: "Nickname already taken." });
+
+        // Create User
+        const scoreEntry = new ScoreEntry({
+            username,
+            score: 0,
+        });
+
+        // Save user to DB
+        const newScoreEntry = await scoreEntry.save();
+
+        return response.status(200).json({ newScoreEntry });
+    } catch (error) {
+        // Return error
+        response.status(500).json({ error });
+    }
 });
 
 router.post("/setScore", async (request, response) => {
@@ -33,23 +55,12 @@ router.post("/setScore", async (request, response) => {
 
         // Get user
         const user = await ScoreEntry.findOne({ username });
+        if (!user) return response.status(404).json({ error: "Username does not exits." });
 
-        if (user) {
-            if (user.score >= score)
-                return response.status(409).json({ error: "Score is lower than the previous one." });
+        if (user.score >= score) return response.status(409).json({ error: "Score is lower than the previous one." });
 
-            // Update Entry
-            var newScoreEntry = await ScoreEntry.findOneAndUpdate({ username }, { $set: { score } }, { new: true });
-        } else {
-            // Create User
-            const scoreEntry = new ScoreEntry({
-                username,
-                score,
-            });
-
-            // Save user to DB
-            newScoreEntry = await scoreEntry.save();
-        }
+        // Update Entry
+        var newScoreEntry = await ScoreEntry.findOneAndUpdate({ username }, { $set: { score } }, { new: true });
 
         response.status(200).json({ newScoreEntry });
     } catch (error) {
