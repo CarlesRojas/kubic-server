@@ -1,13 +1,19 @@
 const mongoose = require("mongoose");
 
-const scoreEntrySchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
         min: 3,
         max: 12,
     },
-    score: {
+    password: {
+        type: String,
+        required: true,
+        min: 6,
+        max: 1024,
+    },
+    highestScore: {
         type: Number,
         required: true,
         min: 0,
@@ -15,4 +21,4 @@ const scoreEntrySchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model("ScoreEntry", scoreEntrySchema);
+module.exports = mongoose.model("User", userSchema);

@@ -11,7 +11,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 // Routes
-const scoreRoutes = require("./routes/score");
+const routes = require("./routes/mainRoutes");
 
 // #################################################
 //   ENVIROMENT
@@ -49,7 +49,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Routes middlewares
-app.use("/api_v1/score", scoreRoutes);
+app.use("/api_v1", routes);
 
 // #################################################
 //   START SERVER
