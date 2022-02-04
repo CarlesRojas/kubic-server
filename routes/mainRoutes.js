@@ -15,7 +15,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 // Get the Validation schemas
-const { registerValidation, scoreValidation } = require("../validation");
+const { registerValidation, scoreValidation, tutorialDoneValidation } = require("../validation");
 
 // Get the schemas
 const User = require("../models/User");
@@ -106,6 +106,32 @@ router.post("/setHighScore", verify, async (request, response) => {
 
         // Update user
         var newUser = await User.findOneAndUpdate({ _id }, { $set: { highestScore: score } }, { new: true });
+
+        response.status(200).json(newUser);
+    } catch (error) {
+        // Return error
+        response.status(500).json({ error });
+    }
+});
+
+router.post("/setTutorialStatus", verify, async (request, response) => {
+    // Validate data
+    const { error } = tutorialDoneValidation(request.body);
+
+    // If there is a validation error
+    if (error) return response.status(422).json({ error: error.details[0].message });
+
+    try {
+        // Deconstruct request
+        const { _id } = request;
+        const { tutorialDone } = request.body;
+
+        // Get user
+        const user = await User.findOne({ _id });
+        if (!user) return response.status(404).json({ error: "Username does not exits." });
+
+        // Update user
+        var newUser = await User.findOneAndUpdate({ _id }, { $set: { tutorialDone } }, { new: true });
 
         response.status(200).json(newUser);
     } catch (error) {

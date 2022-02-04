@@ -19,6 +19,11 @@ const userSchema = new mongoose.Schema({
         min: 0,
         default: 0,
     },
+    tutorialDone: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
 });
 
 module.exports = mongoose.model("User", userSchema);

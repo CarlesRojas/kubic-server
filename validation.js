@@ -17,5 +17,14 @@ const scoreValidation = (data) => {
     return schema.validate(data);
 };
 
+const tutorialDoneValidation = (data) => {
+    const schema = Joi.object({
+        tutorialDone: Joi.boolean().required(),
+    });
+
+    return schema.validate(data);
+};
+
 module.exports.registerValidation = registerValidation;
 module.exports.scoreValidation = scoreValidation;
+module.exports.tutorialDoneValidation = tutorialDoneValidation;
